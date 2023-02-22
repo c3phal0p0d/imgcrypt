@@ -71,20 +71,13 @@ impl TryFrom<&[u8]> for Chunk {
     type Error = &'static str;
 
     fn try_from(bytes: &[u8]) -> std::result::Result<Self, Self::Error> {
-        let mut reader = BufReader::new(bytes);
-        let mut buffer: [u8; 4] = [0; 4];
-
+        
         // read data length
-        reader.read_exact(&mut buffer).unwrap();
-        //let length = u32::from_be_bytes(buffer);
         let length = u32::from_be_bytes(bytes[0..4].try_into().unwrap());
-        println!("Length: {}", length);
 
         // read chunk type
-        reader.read_exact(&mut buffer).unwrap();
         let chunk_type: [u8; 4] = bytes[4..8].try_into().unwrap();
         let chunk_type = ChunkType::try_from(chunk_type).unwrap();
-        println!("Chunk type: {}", chunk_type);
 
         // make sure input chunk type is valid
         if !chunk_type.is_valid(){
@@ -93,7 +86,6 @@ impl TryFrom<&[u8]> for Chunk {
 
         // read data
         let data = Vec::from(&bytes[8..bytes.len()-4]);
-        println!("Data: {:?}", data);
 
         // make sure input length is equal to calculated length
         if length!=data.len().try_into().unwrap() {
@@ -103,12 +95,10 @@ impl TryFrom<&[u8]> for Chunk {
         // read CRC input
         let crc = &bytes[bytes.len()-4..];
         let crc = u32::from_be_bytes(crc.try_into().unwrap());
-        println!("CRC input: {}", crc);
 
         // calculate CRC from input chunk type and data
         let crc_data = [&chunk_type.bytes(), data.as_slice()].concat();
         let calculated_crc = checksum_ieee(&crc_data);
-        println!("CRC calculated: {}", calculated_crc);
 
         // make sure input CRC is equal to calculated CRC
         if crc!=calculated_crc  {
