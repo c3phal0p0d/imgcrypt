@@ -2,14 +2,17 @@ use std::convert::TryFrom;
 use std::str::FromStr;
 use std::fmt;
 
+// PNG chunk type
 #[derive(Debug, PartialEq, Eq)]
 pub struct ChunkType([u8; 4]);
 
 impl ChunkType {
+    // Chunk type as bytes
     pub fn bytes(&self) -> [u8; 4] {
         self.0
     }
 
+    // Check if chunk type consists only of uppercase & lowercase ASCII letters
     pub fn is_valid(&self) -> bool {
         for i in 0..3 {
             if !self.bytes()[i].is_ascii_alphabetic() || !self.is_reserved_bit_valid() {
@@ -19,18 +22,22 @@ impl ChunkType {
         true
     }
 
+    // Check if first letter of chunk type is uppercase ASCII, indicating chunk is strictly necessary when displaying file
     pub fn is_critical(&self)-> bool {
         self.bytes()[0].is_ascii_uppercase()
     }
 
+    // Check if second letter of chunk type is uppercase ASCII, indicating chunk is part of PNG specification or registered in list of PNG special-purpose chunk types
     pub fn is_public(&self) -> bool {
         self.bytes()[1].is_ascii_uppercase()
     }
 
+    // Check if third letter of chunk type is uppercase ASCII.
     pub fn is_reserved_bit_valid(&self) -> bool {
         self.bytes()[2].is_ascii_uppercase()
     }
 
+    // Check if fourth letter is lowercase, inidcating chunk is safe to be copied
     pub fn is_safe_to_copy(&self) -> bool {
         self.bytes()[3].is_ascii_lowercase()
     }
@@ -76,6 +83,7 @@ impl fmt::Display for ChunkType {
         write!(f, "{}", std::str::from_utf8(&self.0).expect("Error displaying chunk type"))
     }
 }
+
 
 #[cfg(test)]
 mod tests {
