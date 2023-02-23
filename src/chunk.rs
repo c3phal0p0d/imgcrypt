@@ -1,5 +1,4 @@
 use std::convert::TryFrom;
-use std::io::{BufReader, Read};
 use std::fmt;
 use crc::crc32::checksum_ieee;
 
@@ -7,6 +6,7 @@ use crate::Result;
 use crate::chunk_type::ChunkType;
 
 // PNG chunk
+#[derive(Debug)]
 pub struct Chunk {
     length: u32,    // number of bytes in chunk's data field
     chunk_type: ChunkType,  // chunk type code
@@ -71,7 +71,7 @@ impl TryFrom<&[u8]> for Chunk {
     type Error = &'static str;
 
     fn try_from(bytes: &[u8]) -> std::result::Result<Self, Self::Error> {
-        
+
         // read data length
         let length = u32::from_be_bytes(bytes[0..4].try_into().unwrap());
 
