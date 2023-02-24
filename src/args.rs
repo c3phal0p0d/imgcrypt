@@ -57,11 +57,11 @@ pub struct DecodeArgs {
 #[derive(Debug, Args)]
 pub struct RemoveArgs {
 
-    // / Path to PNG file
+    /// Path to PNG file
     #[arg(short, long)]
     pub file_path: PathBuf,
 
-    // Chunk type
+    /// Chunk type
     #[arg(short, long)]
     pub chunk_type: String
 }
@@ -69,7 +69,7 @@ pub struct RemoveArgs {
 #[derive(Debug, Args)]
 pub struct PrintArgs {
 
-    // Path to PNG file
+    /// Path to PNG file
     #[arg(short, long)]
     pub file_path: PathBuf
 }
